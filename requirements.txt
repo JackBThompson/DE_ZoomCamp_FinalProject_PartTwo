@@ -1,0 +1,7 @@
+nba_api
+apache-airflow
+apache-airflow-providers-google
+pyspark
+pandas
+google-cloud-storage
+google-cloud-bigquery

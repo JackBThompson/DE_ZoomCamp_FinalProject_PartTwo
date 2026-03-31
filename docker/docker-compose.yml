@@ -1,0 +1,67 @@
+version: '3.8'
+ 
+x-airflow-common: &airflow-common
+  build:
+    context: ..
+    dockerfile: docker/dockerfile.airflow
+  environment:
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/gcp-key.json
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    GCS_BUCKET: ${GCS_BUCKET}
+    BIGQUERY_DATASET: ${BIGQUERY_DATASET}
+  volumes:
+    - ${HOME}/DE_ZoomCamp_FinalProject/airflow/dags:/opt/airflow/dags
+    - ${HOME}/DE_ZoomCamp_FinalProject/gcp-key.json:/opt/airflow/gcp-key.json
+    - airflow-logs:/opt/airflow/logs
+  depends_on:
+    postgres:
+      condition: service_healthy
+ 
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+ 
+  airflow-init:
+    <<: *airflow-common
+    command: >
+      bash -c "airflow db init &&
+               airflow users create
+               --username admin
+               --firstname Admin
+               --lastname User
+               --role Admin
+               --email admin@example.com
+               --password admin"
+    restart: on-failure
+ 
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    restart: always
+ 
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    restart: always
+ 
+volumes:
+  postgres-db:
+  airflow-logs:
+ 

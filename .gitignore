@@ -1,0 +1,36 @@
+##Objective: Prevents sensitive files, large data files, and local environment artifacts from being committed to the repository.##
+
+# Environment and secrets
+.env
+*.json
+*.pem
+*-key.json
+gcp-key.json
+
+# Data files
+data/raw/
+data/processed/
+*.parquet
+*.csv
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+
+# Terraform state
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Airflow logs
+airflow/logs/
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
