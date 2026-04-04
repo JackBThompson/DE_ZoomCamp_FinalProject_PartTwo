@@ -1,0 +1,18 @@
+name: crm_migration
+version: '1.0.0'
+config-version: 2
+
+profile: crm_migration
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  crm_migration:
+    staging:
+      +materialized: view
+      +schema: crm_staging
+    core:
+      +materialized: table
+      +schema: crm_analytics
