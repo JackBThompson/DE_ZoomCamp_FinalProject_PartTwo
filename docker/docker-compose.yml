@@ -15,8 +15,8 @@ x-airflow-common: &airflow-common
     GCS_BUCKET: ${GCS_BUCKET}
     BIGQUERY_DATASET: ${BIGQUERY_DATASET}
   volumes:
-    - ${HOME}/DE_ZoomCamp_FinalProject/airflow/dags:/opt/airflow/dags
-    - ${HOME}/DE_ZoomCamp_FinalProject/gcp-key.json:/opt/airflow/gcp-key.json
+    - ${HOME}/DE_ZoomCamp_FinalProject_PartTwo/airflow/dags:/opt/airflow/dags
+    - ${HOME}/DE_ZoomCamp_FinalProject_PartTwo/gcp-key.json:/opt/airflow/gcp-key.json
     - airflow-logs:/opt/airflow/logs
   depends_on:
     postgres:

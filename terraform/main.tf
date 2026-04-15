@@ -80,6 +80,13 @@ resource "google_project_iam_member" "compute_admin" {
   member  = "serviceAccount:${google_service_account.crm_pipeline_sa.email}"
 }
 
+# Allow the Terraform service account to attach crm-pipeline-sa to the VM
+resource "google_service_account_iam_member" "sa_user" {
+  service_account_id = google_service_account.crm_pipeline_sa.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:data-migration-4626@data-migration-pipeline4626.iam.gserviceaccount.com"
+}
+
 # GCE VM — hosts Airflow
 resource "google_compute_instance" "airflow_vm" {
   name         = "airflow-vm"

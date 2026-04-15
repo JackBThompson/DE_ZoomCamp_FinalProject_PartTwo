@@ -3,6 +3,7 @@
 variable "project_id" {
   description = "Your GCP project ID"
   type        = string
+  default     = "data-migration-pipeline4626"
 }
 
 variable "region" {
@@ -20,10 +21,11 @@ variable "credentials_file" {
 variable "bucket_name" {
   description = "Name of the GCS bucket for raw and processed data"
   type        = string
+  default     = "crm-migration-jt-2025"
 }
 
 variable "bigquery_dataset" {
   description = "BigQuery dataset name for CRM analytics tables"
   type        = string
-  default     = "crm_analytics"
+  default     = "data_migration_pipeline4626"
 }

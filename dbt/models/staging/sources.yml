@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: crm_analytics
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: data_migration_pipeline4626
+    tables:
+      - name: raw_customers
+      - name: raw_contacts
+      - name: raw_deals
+      - name: raw_activities
+      - name: raw_subscriptions
