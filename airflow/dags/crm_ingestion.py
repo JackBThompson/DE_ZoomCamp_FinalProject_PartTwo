@@ -1,4 +1,4 @@
-## Objective: Scheduled DAG that uploads CRM CSV files to GCS and triggers the Spark transformation.
+## Objective: End-to-end DAG — uploads CRM CSVs to GCS, runs Spark transformation, then runs dbt to build the star schema.
 
 import os
 from airflow import DAG
@@ -7,7 +7,8 @@ from airflow.operators.bash import BashOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from datetime import datetime
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'raw')
+DATA_DIR = '/opt/airflow/data/raw'
+DBT_DIR  = '/opt/airflow/dbt'
 
 SOURCE_FILES = [
     'customers.csv',
@@ -50,12 +51,14 @@ def upload_to_gcs(**context):
         print(f"Uploaded {filename} → gs://{bucket}/{gcs_path}")
 
 
+# Step 1 — Upload raw CSVs to GCS
 upload_task = PythonOperator(
     task_id='upload_crm_files_to_gcs',
     python_callable=upload_to_gcs,
     dag=dag,
 )
 
+# Step 2 — Run PySpark: clean, deduplicate, load to BigQuery raw tables
 trigger_spark = BashOperator(
     task_id='trigger_spark',
     bash_command='spark-submit \
@@ -69,4 +72,11 @@ trigger_spark = BashOperator(
     dag=dag,
 )
 
-upload_task >> trigger_spark
+# Step 3 — Run dbt: build staging models and core star schema on top of raw BigQuery tables
+trigger_dbt = BashOperator(
+    task_id='trigger_dbt',
+    bash_command=f'cd {DBT_DIR} && dbt run --profiles-dir .',
+    dag=dag,
+)
+
+upload_task >> trigger_spark >> trigger_dbt
