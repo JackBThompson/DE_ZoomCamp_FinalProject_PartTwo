@@ -67,8 +67,8 @@ trigger_spark = BashOperator(
       --conf spark.hadoop.fs.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem \
       --conf spark.hadoop.fs.AbstractFileSystem.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS \
       --conf spark.hadoop.google.cloud.auth.service.account.enable=true \
-      --conf spark.hadoop.google.cloud.auth.service.account.json.keyfile={{ var.value.gcp_keyfile_path }} \
-      ~/DE_ZoomCamp_FinalProject_PartTwo/spark/transform.py {{ ds }}',
+      --conf spark.hadoop.google.cloud.auth.service.account.json.keyfile=/opt/airflow/gcp-key.json \
+      /home/codespace/DE_ZoomCamp_FinalProject_PartTwo/spark/transform.py {{ ds }}',
     dag=dag,
 )
 
