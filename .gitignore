@@ -34,3 +34,8 @@ airflow/logs/
 
 # VS Code
 .vscode/
+
+# Google Cloud SDK (installed locally)
+y/
+google-cloud-sdk/
+terraform.zip
