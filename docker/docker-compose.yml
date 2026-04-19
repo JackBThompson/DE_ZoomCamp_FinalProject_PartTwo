@@ -1,5 +1,5 @@
 version: '3.8'
- 
+
 x-airflow-common: &airflow-common
   build:
     context: ..
@@ -14,16 +14,21 @@ x-airflow-common: &airflow-common
     GCP_PROJECT_ID: ${GCP_PROJECT_ID}
     GCS_BUCKET: ${GCS_BUCKET}
     BIGQUERY_DATASET: ${BIGQUERY_DATASET}
+    JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+    SPARK_HOME: /opt/spark
   volumes:
-    - ${HOME}/DE_ZoomCamp_FinalProject_PartTwo/airflow/dags:/opt/airflow/dags
-    - ${HOME}/DE_ZoomCamp_FinalProject_PartTwo/data/raw:/opt/airflow/data/raw
-    - ${HOME}/DE_ZoomCamp_FinalProject_PartTwo/dbt:/opt/airflow/dbt
-    - ${HOME}/DE_ZoomCamp_FinalProject_PartTwo/gcp-key.json:/opt/airflow/gcp-key.json
+    - /home/codespace/DE_ZoomCamp_FinalProject_PartTwo/airflow/dags:/opt/airflow/dags
+    - /home/codespace/DE_ZoomCamp_FinalProject_PartTwo/data/raw:/opt/airflow/data/raw
+    - /home/codespace/DE_ZoomCamp_FinalProject_PartTwo/dbt:/opt/airflow/dbt
+    - /home/codespace/DE_ZoomCamp_FinalProject_PartTwo/spark:/opt/airflow/spark
+    - /home/codespace/DE_ZoomCamp_FinalProject_PartTwo/gcp-key.json:/opt/airflow/gcp-key.json
+    - /home/codespace/spark-3.5.1-bin-hadoop3:/opt/spark
+    - /home/codespace/gcs-connector-hadoop3-latest.jar:/opt/spark/jars/gcs-connector-hadoop3-latest.jar
     - airflow-logs:/opt/airflow/logs
   depends_on:
     postgres:
       condition: service_healthy
- 
+
 services:
   postgres:
     image: postgres:15
@@ -37,7 +42,7 @@ services:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
       retries: 5
- 
+
   airflow-init:
     <<: *airflow-common
     command: >
@@ -50,20 +55,19 @@ services:
                --email admin@example.com
                --password admin"
     restart: on-failure
- 
+
   airflow-webserver:
     <<: *airflow-common
     command: webserver
     ports:
       - "8080:8080"
     restart: always
- 
+
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
     restart: always
- 
+
 volumes:
   postgres-db:
   airflow-logs:
- 

@@ -61,14 +61,14 @@ upload_task = PythonOperator(
 # Step 2 — Run PySpark: clean, deduplicate, load to BigQuery raw tables
 trigger_spark = BashOperator(
     task_id='trigger_spark',
-    bash_command='spark-submit \
+    bash_command='/opt/spark/bin/spark-submit \
       --packages com.google.cloud.spark:spark-bigquery-with-dependencies_2.12:0.36.1 \
-      --jars ~/gcs-connector-hadoop3-latest.jar \
+      --jars /opt/spark/jars/gcs-connector-hadoop3-latest.jar \
       --conf spark.hadoop.fs.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem \
       --conf spark.hadoop.fs.AbstractFileSystem.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS \
       --conf spark.hadoop.google.cloud.auth.service.account.enable=true \
       --conf spark.hadoop.google.cloud.auth.service.account.json.keyfile=/opt/airflow/gcp-key.json \
-      /home/codespace/DE_ZoomCamp_FinalProject_PartTwo/spark/transform.py {{ ds }}',
+      /opt/airflow/spark/transform.py {{ ds }}',
     dag=dag,
 )
 
